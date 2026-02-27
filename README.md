@@ -251,25 +251,30 @@ mongo:
 Put screenshot files in `docs/screenshots/` with the names below.
 
 ### Shop
+<img width="1508" height="621" alt="Screenshot 2026-02-26 at 10 57 50 pm" src="https://github.com/user-attachments/assets/012419e6-d2d2-4776-9939-38633303776b" />
 
-![Shop home banner and nav](docs/screenshots/shop-home-banner-nav.png)
-![Shop product listing and filters](docs/screenshots/shop-product-listing-filters.png)
+<img width="1512" height="982" alt="Screenshot 2026-02-26 at 10 57 53 pm" src="https://github.com/user-attachments/assets/f7fd3568-4108-41f1-8b88-ffc9f5b1149e" />
+
 
 ### Admin
 
-![Admin add product and add design](docs/screenshots/admin-add-product-and-design.png)
-![Admin add slider and manage slider items](docs/screenshots/admin-slider-management.png)
-![Admin manage products and designs](docs/screenshots/admin-manage-products-designs.png)
-![Admin manage designs and users](docs/screenshots/admin-manage-designs-users.png)
+<img width="1443" height="905" alt="Screenshot 2026-02-26 at 10 58 11 pm" src="https://github.com/user-attachments/assets/5358dfc1-cb5e-4ac3-9fbb-3ae188d8b275" />
+<img width="1462" height="905" alt="Screenshot 2026-02-26 at 10 58 25 pm" src="https://github.com/user-attachments/assets/6a74abaa-f274-4c7f-aa94-6f14aa315756" />
 
-### Customize
+<img width="1466" height="902" alt="Screenshot 2026-02-26 at 10 58 42 pm" src="https://github.com/user-attachments/assets/3d7fe032-6e1b-4839-8342-35ad12bc1741" />
+<img width="1477" height="904" alt="Screenshot 2026-02-26 at 10 58 35 pm" src="https://github.com/user-attachments/assets/9abff5af-1cbf-4429-be79-de33343c6146" />
 
-![Customize jewelry page](docs/screenshots/customize-page.png)
+
+### Customize![Uploading Screenshot 2026-02-26 at 10.58.35 pm.png…]()
+
+<img width="1504" height="727" alt="Screenshot 2026-02-26 at 10 59 24 pm" src="https://github.com/user-attachments/assets/0bae0bab-ac2c-490d-89d3-804368aa9e4e" />
+
 
 ### Checkout
+<img width="1484" height="900" alt="Screenshot 2026-02-26 at 11 00 46 pm" src="https://github.com/user-attachments/assets/795d5b19-4379-491e-af53-9a4b5e3281f4" />
+<img width="1427" height="896" alt="Screenshot 2026-02-26 at 11 00 39 pm" src="https://github.com/user-attachments/assets/e0ab9d70-b7f0-45c9-b798-bea7c3dbe063" />
+<img width="1505" height="588" alt="Screenshot 2026-02-26 at 11 00 28 pm" src="https://github.com/user-attachments/assets/4b4d4727-10d4-41c2-b811-73531a757e74" />
+<img width="1429" height="906" alt="Screenshot 2026-02-26 at 11 00 18 pm" src="https://github.com/user-attachments/assets/003a9182-3c53-42f7-948e-7a927df31e5f" />
+<img width="1410" height="906" alt="Screenshot 2026-02-26 at 11 00 05 pm" src="https://github.com/user-attachments/assets/e3d25047-2605-40b7-85bc-c4df8a8c3df1" />
 
-![Checkout information form top](docs/screenshots/checkout-information-top.png)
-![Checkout information form bottom](docs/screenshots/checkout-information-bottom.png)
-![Checkout shipping step](docs/screenshots/checkout-shipping-step.png)
-![Checkout payment step top](docs/screenshots/checkout-payment-top.png)
-![Checkout payment step bottom](docs/screenshots/checkout-payment-bottom.png)
+
