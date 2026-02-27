@@ -33,7 +33,17 @@ function ProductList() {
       .replace(/s$/, "");
 
   const normalizeQuality = (value) => String(value || "").trim().toLowerCase();
-  const normalizeGemQuality = (value) => String(value || "").trim().toLowerCase();
+  const normalizeGemQuality = (value) => {
+    const normalized = String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+
+    // Keep legacy typo data mapped to one canonical value.
+    if (["standdard", "stardard", "standart"].includes(normalized)) return "standard";
+    if (["premiun", "premimum"].includes(normalized)) return "premium";
+    return normalized;
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -240,23 +250,7 @@ function ProductList() {
     return ["All", ...knownQualities, ...fromProducts];
   }, [products]);
 
-  const gemQualityOptions = useMemo(() => {
-    const knownQualities = ["Premium", "Standard"];
-    const excludedLegacyQualities = new Set(["a", "b"]);
-    const normalizedKnown = new Set(knownQualities.map((item) => normalizeGemQuality(item)));
-    const fromProducts = [];
-
-    for (const product of products) {
-      const rawGemQuality = String(product.gemQuality || "").trim();
-      const normalized = normalizeGemQuality(rawGemQuality);
-      if (!normalized || excludedLegacyQualities.has(normalized) || normalizedKnown.has(normalized))
-        continue;
-      fromProducts.push(rawGemQuality);
-      normalizedKnown.add(normalized);
-    }
-
-    return ["All", ...knownQualities, ...fromProducts];
-  }, [products]);
+  const gemQualityOptions = useMemo(() => ["All", "Premium", "Standard"], []);
 
   const productsById = useMemo(
     () => new Map(products.map((product) => [String(product._id || ""), product])),

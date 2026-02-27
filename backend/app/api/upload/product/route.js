@@ -1,6 +1,3 @@
-import crypto from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../../lib/mongodb";
 import { getSessionUser } from "../../../../lib/auth";
@@ -73,20 +70,31 @@ export async function POST(request) {
     );
   }
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "products");
-  await mkdir(uploadDir, { recursive: true });
+  const bytes = Buffer.from(await file.arrayBuffer());
+  const result = await db.collection("mediaFiles").insertOne({
+    kind: "product",
+    originalName: String(file.name || "").trim(),
+    mimeType: mimeType || "application/octet-stream",
+    extension,
+    size: bytes.length,
+    data: bytes,
+    uploadedBy: String(user.id || ""),
+    createdAt: new Date()
+  });
 
-  const safeName = `product-${Date.now()}-${crypto.randomUUID()}.${extension}`;
-  const destination = path.join(uploadDir, safeName);
-
-  const bytes = await file.arrayBuffer();
-  await writeFile(destination, Buffer.from(bytes));
-
-  const imagePath = `/uploads/products/${safeName}`;
+  const imagePath = `/api/media/${result.insertedId.toString()}`;
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const host = forwardedHost || request.headers.get("host") || "";
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const protocol = forwardedProto || "http";
+  const absoluteImageUrl = host ? `${protocol}://${host}${imagePath}` : imagePath;
 
   return NextResponse.json({
     message: "Product image uploaded.",
+    mediaId: result.insertedId.toString(),
     imagePath,
-    imageUrl: `${new URL(request.url).origin}${imagePath}`
+    // Keep primary URL relative so frontend works behind reverse proxy and closed backend ports.
+    imageUrl: imagePath,
+    absoluteImageUrl
   });
 }

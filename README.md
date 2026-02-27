@@ -184,7 +184,7 @@ npm run dev
 docker compose up --build
 ```
 
-Backend runs at `http://localhost:3000` and MongoDB runs at `mongodb://localhost:27017`.
+Frontend runs at `http://localhost:5173`, backend at `http://localhost:3000`, and MongoDB at `mongodb://localhost:27017`.
 
 ## Backend (docker-compose.yml)
 
@@ -192,15 +192,17 @@ Backend service in [docker-compose.yml](docker-compose.yml):
 
 ```yaml
 backend:
-  image: node:20-alpine
-  working_dir: /app/backend
-  command: sh -c "npm install && npm run dev -- --hostname 0.0.0.0 --port 3000"
+  build:
+    context: ./backend
+    dockerfile: Dockerfile
+  restart: unless-stopped
   ports:
     - "3000:3000"
   environment:
     MONGODB_URI: mongodb://mongo:27017/jewelryDB
-    NODE_ENV: development
-    CHOKIDAR_USEPOLLING: "true"
+    NODE_ENV: production
+  volumes:
+    - ./backend/public/uploads:/app/public/uploads
 ```
 
 ### Variables
@@ -208,8 +210,7 @@ backend:
 | Variable | Purpose | Example |
 | --- | --- | --- |
 | `MONGODB_URI` | Backend MongoDB connection string used by `backend/lib/mongodb.js` | `mongodb://mongo:27017/jewelryDB` |
-| `NODE_ENV` | Runtime mode | `development` |
-| `CHOKIDAR_USEPOLLING` | Improves hot-reload in Docker bind mounts | `true` |
+| `NODE_ENV` | Runtime mode | `production` |
 
 ## MongoDB (docker-compose.yml)
 
@@ -235,9 +236,7 @@ mongo:
 
 | Volume / Mount | Type | Purpose |
 | --- | --- | --- |
-| `./backend:/app/backend` | Bind mount | Live backend code sync from your local machine. |
-| `backend_node_modules:/app/backend/node_modules` | Named volume | Keep container dependencies isolated from host OS. |
-| `./backend/public/uploads:/app/backend/public/uploads` | Bind mount | Persist uploaded photos on local device. |
+| `./backend/public/uploads:/app/public/uploads` | Bind mount | Persist uploaded photos on local device. |
 | `mongodb_data:/data/db` | Named volume | Persist MongoDB data across container restarts. |
 
 ## Notes

@@ -11,6 +11,27 @@ const toNumber = (value, fallback = 0) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+const normalizeImageReference = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("/")) return raw;
+
+  try {
+    const parsed = new URL(raw);
+    const path = String(parsed.pathname || "").trim();
+    if (
+      path.startsWith("/uploads/") ||
+      path.startsWith("/products/") ||
+      path.startsWith("/api/media/")
+    ) {
+      return path;
+    }
+    return raw;
+  } catch {
+    return raw;
+  }
+};
+
 export async function GET() {
   const db = await connectDB();
   const items = await db.collection("cart").find().toArray();
@@ -41,6 +62,7 @@ export async function GET() {
   return NextResponse.json(
     items.map((i) => ({
       ...i,
+      image: normalizeImageReference(i.image),
       price: toNumber(i.price, 0),
       quantity: toNumber(i.quantity, 1),
       quality: String(i.quality || qualityByProductId.get(String(i.productId || "")) || "").trim(),
@@ -71,6 +93,7 @@ export async function POST(request) {
 
   await db.collection("cart").insertOne({
     ...data,
+    image: normalizeImageReference(data.image),
     price: normalizedPrice,
     quantity: normalizedQuantity
   });

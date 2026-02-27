@@ -2,6 +2,37 @@ import { connectDB } from "../../../lib/mongodb";
 import { NextResponse } from "next/server";
 import { getSessionUser } from "../../../lib/auth";
 
+function normalizeImageReference(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("/")) return raw;
+
+  try {
+    const parsed = new URL(raw);
+    const path = String(parsed.pathname || "").trim();
+    if (
+      path.startsWith("/uploads/") ||
+      path.startsWith("/products/") ||
+      path.startsWith("/api/media/")
+    ) {
+      return path;
+    }
+    return raw;
+  } catch {
+    return raw;
+  }
+}
+
+function normalizeGemQuality(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (!normalized) return "";
+  if (["premium", "premiun", "premimum"].includes(normalized)) return "Premium";
+  if (["standard", "standdard", "stardard", "standart"].includes(normalized)) {
+    return "Standard";
+  }
+  return "";
+}
+
 export async function GET(request) {
   const db = await connectDB();
 
@@ -17,6 +48,8 @@ export async function GET(request) {
 
   const formatted = products.map(p => ({
     ...p,
+    image: normalizeImageReference(p.image),
+    gemQuality: normalizeGemQuality(p.gemQuality),
     _id: p._id.toString()
   }));
 
@@ -41,8 +74,8 @@ export async function POST(request) {
     price: Number(payload.price || 0),
     material: String(payload.material || "").trim(),
     quality: String(payload.quality || "").trim(),
-    gemQuality: String(payload.gemQuality || "").trim(),
-    image: String(payload.image || "").trim(),
+    gemQuality: normalizeGemQuality(payload.gemQuality),
+    image: normalizeImageReference(payload.image),
     description: String(payload.description || "").trim(),
     showInSlider: Boolean(payload.showInSlider)
   };

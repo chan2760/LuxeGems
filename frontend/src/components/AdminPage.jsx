@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const DESIGN_CATEGORIES = ["Ring", "Bracelet", "Necklace", "Earring"];
+const GEM_QUALITY_OPTIONS = ["Premium", "Standard"];
 const DEFAULT_DESIGNS = [
   {
     id: "bracelet-chain",
@@ -81,6 +82,16 @@ const normalizeDesignId = (value) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+const normalizeGemQuality = (value) => {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (!normalized) return "";
+  if (["premium", "premiun", "premimum"].includes(normalized)) return "Premium";
+  if (["standard", "standdard", "stardard", "standart"].includes(normalized)) {
+    return "Standard";
+  }
+  return "";
+};
+
 function AdminPage() {
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
@@ -113,7 +124,7 @@ function AdminPage() {
         price: product.price ?? 0,
         material: product.material || "",
         quality: product.quality || "",
-        gemQuality: product.gemQuality || "",
+        gemQuality: normalizeGemQuality(product.gemQuality),
         image: product.image || "",
         description: product.description || ""
       };
@@ -233,11 +244,12 @@ function AdminPage() {
   }, [loadData]);
 
   const onRowChange = (id, field, value) => {
+    const nextValue = field === "gemQuality" ? normalizeGemQuality(value) : value;
     setEditableProducts((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        [field]: value
+        [field]: nextValue
       }
     }));
   };
@@ -460,7 +472,8 @@ function AdminPage() {
       credentials: "include",
       body: JSON.stringify({
         ...draft,
-        price: Number(draft.price || 0)
+        price: Number(draft.price || 0),
+        gemQuality: normalizeGemQuality(draft.gemQuality)
       })
     });
 
@@ -488,7 +501,8 @@ function AdminPage() {
       credentials: "include",
       body: JSON.stringify({
         ...payload,
-        price: Number(payload.price || 0)
+        price: Number(payload.price || 0),
+        gemQuality: normalizeGemQuality(payload.gemQuality)
       })
     });
 
@@ -855,11 +869,22 @@ function AdminPage() {
             value={draft.quality}
             onChange={(e) => setDraft((p) => ({ ...p, quality: e.target.value }))}
           />
-          <input
-            placeholder="Gem Quality (e.g. Premium, Standard)"
+          <select
             value={draft.gemQuality}
-            onChange={(e) => setDraft((p) => ({ ...p, gemQuality: e.target.value }))}
-          />
+            onChange={(e) =>
+              setDraft((p) => ({
+                ...p,
+                gemQuality: normalizeGemQuality(e.target.value)
+              }))
+            }
+          >
+            <option value="">Gem Quality (optional)</option>
+            {GEM_QUALITY_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
           <input
             placeholder="Image URL (or upload below)"
             value={draft.image}
@@ -1162,11 +1187,17 @@ function AdminPage() {
                   onChange={(e) => onRowChange(product._id, "quality", e.target.value)}
                   placeholder="Quality"
                 />
-                <input
+                <select
                   value={row.gemQuality || ""}
                   onChange={(e) => onRowChange(product._id, "gemQuality", e.target.value)}
-                  placeholder="Gem Quality"
-                />
+                >
+                  <option value="">Gem Quality (optional)</option>
+                  {GEM_QUALITY_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="admin-image-editor">
                 <input

@@ -97,6 +97,27 @@ function titleFromId(id) {
     .join(" ");
 }
 
+function normalizeImageReference(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("/")) return raw;
+
+  try {
+    const parsed = new URL(raw);
+    const path = String(parsed.pathname || "").trim();
+    if (
+      path.startsWith("/uploads/") ||
+      path.startsWith("/products/") ||
+      path.startsWith("/api/media/")
+    ) {
+      return path;
+    }
+    return raw;
+  } catch {
+    return raw;
+  }
+}
+
 function normalizeDesign(rawDesign, index) {
   const id = slugify(rawDesign?.id || rawDesign?.title || `design-${index + 1}`);
   if (!id) return null;
@@ -104,7 +125,7 @@ function normalizeDesign(rawDesign, index) {
   const categoryCandidate = String(rawDesign?.category || "").trim();
   const category = DESIGN_CATEGORIES.has(categoryCandidate) ? categoryCandidate : "Ring";
   const title = String(rawDesign?.title || "").trim() || titleFromId(id) || `Design ${index + 1}`;
-  const image = String(rawDesign?.image || "").trim() || PLACEHOLDER_IMAGE;
+  const image = normalizeImageReference(rawDesign?.image) || PLACEHOLDER_IMAGE;
   const productId = String(rawDesign?.productId || "").trim();
 
   return {
@@ -137,7 +158,7 @@ function normalizeSliderItem(rawSlide, index) {
   if (!id) return null;
 
   const title = String(rawSlide?.title || "").trim() || titleFromId(id) || `Slide ${index + 1}`;
-  const image = String(rawSlide?.image || "").trim() || PLACEHOLDER_IMAGE;
+  const image = normalizeImageReference(rawSlide?.image) || PLACEHOLDER_IMAGE;
   const description = String(rawSlide?.description || "").trim();
   const productId = String(rawSlide?.productId || "").trim();
   const numericPrice = Number(rawSlide?.price ?? 0);
